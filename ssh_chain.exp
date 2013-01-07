@@ -1,0 +1,50 @@
+#!/usr/bin/expect -f
+set timeout 5
+#set env(TERM)
+
+set server1 [lindex $argv 0]
+set user1 [lindex $argv 1]
+set password1 [lindex $argv 2]
+set server2 [lindex $argv 3]
+set user2 [lindex $argv 4]
+set password2 [lindex $argv 5]
+
+proc listen_prompt {} {
+	expect {
+		"$ " {interact; exit 0}
+		"# " {interact; exit 0}
+		"> " {interact; exit 0}
+		default {}
+		}
+}
+
+proc ssh_expect {password passkey} {
+	expect {
+	"(yes/no)? " {
+		send "yes\r"
+		expect {
+		"assword" {
+			send "$password\r"
+			listen_prompt
+			}
+		}
+	}
+	"assword: " {
+		send "$password\r"
+		listen_prompt
+	}
+
+	default {}
+	timeout {exit 2}
+}
+	ssh_expect $passkey $password
+}
+
+if { $server1 == "" || $user1 =="" || $password1 == "" || $server2 == "" || $user2 =="" || $password2 == "" } {
+	puts "Usage : $argv0 server1 user1 password1 server2 user2 password2"
+	exit 1
+}
+
+spawn ssh -t $user1@$server1 ssh $user2@$server2
+ssh_expect $password1 $password2
+
