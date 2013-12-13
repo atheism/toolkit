@@ -1,0 +1,51 @@
+#!/usr/bin/stap -g
+# ip_stat.stp
+# This is a script for make a statistics of skb in ip packet sending.
+# You can change it for ip packet recieving with other probe functions.
+# A sk_buff struct argument need to be provided to make the whole staff run.
+
+%{
+#include <linux/in.h>
+#include <linux/ip.h>
+#include <linux/types.h>
+%} /* <-- top level */
+
+global ips
+
+function read_iphdr:long(skb:long) %{ /* pure */
+struct iphdr *iph = ip_hdr((struct sk_buff *)STAP_ARG_skb);
+STAP_RETVALUE = (long)iph;
+%} /* <-- function body */
+
+function str_ip:string(ip:long) %{ /* pure */
+	__be32 ip = ntohl(STAP_ARG_ip);
+	sprintf(STAP_RETVALUE, "%d.%d.%d.%d",
+			(ip & 0xFF000000) >> 24,
+			(ip & 0x00FF0000) >> 16,
+			(ip & 0x0000FF00) >> 8,
+			(ip & 0x000000FF));
+%} /* <-- function body */
+
+function print_iphdr:long(iphdr) {
+//	saddr = @cast(iphdr, "iphdr")->saddr;
+	daddr = @cast(iphdr, "iphdr")->daddr;
+	//printf("%s --> %s\n", str_ip(saddr), str_ip(daddr));
+	if (0x100007f != daddr)
+		ips[str_ip(daddr)]++;
+}
+
+probe begin {
+	printf("SystemTap start! use CTRL^C to stop\n");
+}
+
+probe kernel.function("ip_output") {
+	iph = read_iphdr(pointer_arg(1));
+	print_iphdr(iph);
+}
+
+probe end {
+	printf("SystemTap end!\n");
+	foreach (ip in ips) {
+		printf("%s --> %d\n", ip, ips[ip]);
+	}
+}
