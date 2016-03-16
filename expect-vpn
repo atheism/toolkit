@@ -1,0 +1,18 @@
+#!/usr/bin/expect -f
+set timeout -1
+#set env(TERM)
+
+set password [exec ~/bin/getpass]
+
+spawn /opt/forticlient-sslvpn/64bit/forticlientsslvpn_cli --server SOMEVPN.COM:10443 --vpnuser VPNUSER --keepalive
+expect {
+	"VPN:" {
+		send "$password\r"
+		expect {
+		"to this server? (Y/N)" {
+			send "Y\r"
+			interact
+			}
+		}
+	}
+}
