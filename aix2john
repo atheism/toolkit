@@ -1,0 +1,2 @@
+#!/bin/bash
+cat $1|egrep ":|password" | sed 's/password = //g' | tr -d "\t " |sed ':a;N;$!ba;s/:\n/:/g'
