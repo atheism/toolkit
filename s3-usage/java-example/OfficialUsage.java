@@ -20,13 +20,13 @@ import com.amazonaws.Protocol;
 class OfficialUsage {
 	public static void main(String []args) {
 	
-		String accessKey = "admin";
-		String secretKey = "admin";
+		String accessKey = "ACCESS_KEY";
+		String secretKey = "SECRET_KEY";
 		
 		// create connection
 		AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 		AmazonS3 conn = new AmazonS3Client(credentials);
-		conn.setEndpoint("http://10.0.101.68:7480");
+		conn.setEndpoint("http://RGW_HOST:7480");
 	
 		// list bucket in this account
 		List<Bucket> buckets = conn.listBuckets();
