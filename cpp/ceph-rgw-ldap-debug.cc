@@ -16,6 +16,7 @@ int main()
     string searchdn = "ou=people,dc=test,dc=com";
     string searchfilter = "(uid=UID)";
     string dnattr = "uid";
+    string pwd = "PASSWD";
 
     string uri = "ldap://HOST:PORT";
 
@@ -50,7 +51,7 @@ int main()
                         (void*) &ldap_ver);
                 //ret = ldap_set_option(tldap, LDAP_OPT_REFERRALS, LDAP_OPT_OFF);
                 if (ret == LDAP_SUCCESS) {
-                    ret = ldap_simple_bind_s(tldap, dn, bindpw.c_str());
+                    ret = ldap_simple_bind_s(tldap, dn, pwd.c_str());
                     cout << ldap_err2string(ret) << endl;
                     cout << ret << endl;
                     if (ret == LDAP_SUCCESS) {
