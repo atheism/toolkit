@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LifecycleConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+   <Rule>
+      <ID>1-day-rule</ID>
+      <Prefix>tmp</Prefix>
+      <Status>Enabled</Status>
+      <Expiration>
+         <Days>1</Days>
+      </Expiration>
+   </Rule>
+   <Rule>
+      <ID>7-day-rule</ID>
+      <Prefix>logs</Prefix>
+      <Status>Enabled</Status>
+      <Expiration>
+         <Days>7</Days>
+      </Expiration>
+   </Rule>
+   <Rule>
+      <ID>31-day-rule</ID>
+      <Prefix>documents</Prefix>
+      <Status>Enabled</Status>
+      <Expiration>
+         <Days>31</Days>
+      </Expiration>
+   </Rule>
+</LifecycleConfiguration>
