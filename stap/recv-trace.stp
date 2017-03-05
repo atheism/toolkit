@@ -1,0 +1,17 @@
+#!/usr/bin/stap -g
+
+
+probe timer.sec(5)
+{
+	exit();
+}
+
+probe kernel.function("ipv4_mtu@net/ipv4/route.c").return
+{
+	name = "lo";
+	if (name != $dst->dev->name$)
+	{
+		printf("%s -> %s %d\n", probefunc(), $dst->dev->name$, $return);
+		print_backtrace();
+	}
+}
