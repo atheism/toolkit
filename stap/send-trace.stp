@@ -1,0 +1,13 @@
+#!/usr/bin/stap -g
+
+
+probe timer.sec(5)
+{
+	exit();
+}
+
+probe kernel.function("*@net/socket.c").return
+{
+	printf("%s -> %s\n", probefunc(), $$parms$$);
+	print_backtrace();
+}
